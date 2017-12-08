@@ -36,6 +36,7 @@ namespace SoccerStats
                     string[] values = line.Split(',');
                     soccerResults.Add(values);
                 }
+
             }
 
             return soccerResults;
