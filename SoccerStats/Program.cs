@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace SoccerStats
@@ -25,22 +22,63 @@ namespace SoccerStats
             }
         }
 
-        public static List<string[]> ReadSoccerResults(string fileName)
+        public static List<GameResult> ReadSoccerResults(string fileName)
         {
-            var soccerResults = new List<string[]>();
+            var soccerResults = new List<GameResult>();
             using (var reader = new StreamReader(fileName))
             {
                 string line = "";
+                
+                //read the header row of the spreadsheet, to set loop to the first row of data
+                reader.ReadLine();
+
                 while ((line = reader.ReadLine()) != null)
                 {
+                    var gameResult = new GameResult();
                     string[] values = line.Split(',');
-                    soccerResults.Add(values);
-                }
 
+                    DateTime gameDate;
+                    if (DateTime.TryParse(values[0], out gameDate))
+                    {
+                        gameResult.GameDate = gameDate;
+                    }
+
+                    gameResult.TeamName = values[1];
+                    HomeOrAway homeOrAway;
+                    if (Enum.TryParse(values[2], out homeOrAway))
+                    {
+                        gameResult.HomeOrAway = homeOrAway;
+                    }
+
+                    //Goals,GoalAttempts,ShotsOnGoal,ShotsOffGoal
+                    int parseInt;
+                    if (int.TryParse(values[3], out parseInt))
+                    {
+                        gameResult.Goals = parseInt;
+                    }
+                    if (int.TryParse(values[4], out parseInt))
+                    {
+                        gameResult.GoalAttempts = parseInt;
+                    }
+                    if (int.TryParse(values[5], out parseInt))
+                    {
+                        gameResult.ShotsOnGoal = parseInt;
+                    }
+                    if (int.TryParse(values[6], out parseInt))
+                    {
+                        gameResult.ShotsOffGoal = parseInt;
+                    }
+
+                    double possessionPercent;
+                    if (double.TryParse(values[7], out possessionPercent))
+                    {
+                        gameResult.PossessionPercent = possessionPercent;
+                    }
+                    soccerResults.Add(gameResult);
+                }
             }
 
             return soccerResults;
-            
         }
     }
 }
